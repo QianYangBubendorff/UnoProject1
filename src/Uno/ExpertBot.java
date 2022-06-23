@@ -61,6 +61,15 @@ public class ExpertBot extends Player {
 
     @Override
     public String chooseColor() {
-        return null;
+        System.out.println(name + " --> You may select a different color to play: 'R' for red, 'B' for blue, 'G' for green and 'Y' for yellow");
+        String[] colorStrings = {"R", "Y", "G", "B"};
+        return colorStrings[(int) Math.floor(Math.random() * 4)];
+    }
+
+    @Override
+    public void returnHand(Carddeck drawDeck) {
+        while(hand.size()!=0){
+            drawDeck.addCard(hand.remove(0));
+        }
     }
 }

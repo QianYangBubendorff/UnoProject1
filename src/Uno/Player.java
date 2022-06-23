@@ -45,4 +45,5 @@ public abstract class Player {
     public abstract String decisionToChallenge();
     public abstract void resetBotHasDrawn();
     public abstract String chooseColor();
+    public abstract void returnHand(Carddeck drawDeck);
 }

@@ -31,7 +31,7 @@ public class SmartBot extends Player{
     }
 
     @Override
-    public String chooseColor(){
+    public String chooseColor() {
         HashMap<String, Integer> colorCount = new HashMap<>();
         String colorCode = "";
         String cardColor = "";
@@ -67,6 +67,7 @@ public class SmartBot extends Player{
         }
         return colorCode;
     }
+
 
     @Override
     public Card play(String indexStr) {
@@ -150,5 +151,12 @@ public class SmartBot extends Player{
         String challengeChoice = challengeDecision[(int) Math.floor(Math.random() * 2)];
         System.out.println(challengeChoice);
         return challengeChoice;
+    }
+
+    @Override
+    public void returnHand(Carddeck drawDeck) {
+        while(hand.size()!=0){
+            drawDeck.addCard(hand.remove(0));
+        }
     }
 }

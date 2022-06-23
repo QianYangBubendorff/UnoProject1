@@ -109,9 +109,28 @@ public class HumanPlayer extends Player {
 
     @Override
     public String chooseColor() {
-        Scanner input = new Scanner(System.in);
-        String colorChoice = input.next();
-        return colorChoice;
+        boolean invalidColor = false;
+        String colorCode = "";
+        do {
+            System.out.println(name + " --> You may select a different color to play: 'R' for red, 'B' for blue, 'G' for green and 'Y' for yellow");
+            Scanner input = new Scanner(System.in);
+            String colorChoice = input.next();
+            if (colorChoice.equalsIgnoreCase("R") || colorChoice.equalsIgnoreCase("Y") || colorChoice.equalsIgnoreCase("B") || colorChoice.equalsIgnoreCase("G")) {
+                invalidColor = false;
+                colorCode = colorChoice;
+            } else {
+                System.out.println("The input color is not valid, please select a valid color!");
+                invalidColor = true;
+            }
+        }while (invalidColor);
+        return colorCode;
+    }
+
+    @Override
+    public void returnHand(Carddeck drawDeck) {
+        while (hand.size() != 0) {
+            drawDeck.addCard(hand.remove(0));
+        }
     }
 }
 
