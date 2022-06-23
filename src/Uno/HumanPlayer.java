@@ -28,6 +28,11 @@ public class HumanPlayer extends Player {
         return hand.remove(cardIndex - 1);
     }
 
+    @Override
+    public int getPoints() {
+        return super.getPoints();
+    }
+
     //show the player what cards he/she has in hand
     @Override
     public void showHand() {

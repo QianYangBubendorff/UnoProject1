@@ -7,6 +7,11 @@ public class ExpertBot extends Player {
     }
 
     @Override
+    public int getPoints() {
+        return super.getPoints();
+    }
+
+    @Override
     public void showHand() {
         System.out.println("Player " + name + " : Here are the cards in hand: ");
         for (int i = 0; i < hand.size(); i++) {

@@ -26,9 +26,14 @@ public class SmartBot extends Player{
     }
 
     @Override
+    public int getPoints() {
+        return super.getPoints();
+    }
+
+    @Override
     public String chooseColor(){
         HashMap<String, Integer> colorCount = new HashMap<>();
-        String returnColorCode = "";
+        String colorCode = "";
         String cardColor = "";
         for(Card c: hand){
             cardColor = c.color.name();
@@ -54,14 +59,13 @@ public class SmartBot extends Player{
             }
         }
         int max= 0;
-
         for(Map.Entry<String, Integer> entry: colorCount.entrySet()){
             if(entry.getValue()>max){
                 max = entry.getValue();
-                returnColorCode = entry.getKey();
+                colorCode = entry.getKey();
             }
         }
-        return returnColorCode;
+        return colorCode;
     }
 
     @Override

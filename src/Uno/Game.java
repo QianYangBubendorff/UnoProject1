@@ -32,15 +32,17 @@ public class Game {
     }
 
     public void Run() {
-        initialize();
-        printState();
         do {
-            playerLoop();
+            initialize();
             printState();
-            DiscardPilebecomesDrawPileIfDrawPileEmpty();
-        } while (!roundOver());
-        updateState();
-        //} while (!sessionOver());
+            do {
+                playerLoop();
+                printState();
+//            DiscardPilebecomesDrawPileIfDrawPileEmpty();
+            } while (!roundOver());
+            updateRound();
+        } while (!sessionOver());
+        updateSession();
     }
 
     //method to print out the hands of the 4 players for debugging purposes
@@ -55,28 +57,27 @@ public class Game {
     // initialize the game:
 // generate the drawdeck with 108 cards
 // create 4 players and shuffle the players to pick the first player to start the game
-// 7 cards for each players
+// 7 cards for each player
 // pick the last card from the draw pile to put on the discard pile
 // If the top card of discard pile is a draw 4 action card, the card will be returned to the draw pile.
 // The draw pile will be reshuffled and a new top card from the drawn from the draw pile.
     private void initialize() {
         drawDeck.generateDeck();
         createPlayers();
-        //Collections.shuffle(players); //Just removed for easier debug
+        Collections.shuffle(players); //Just removed for easier debug
         System.out.println(players);
         currentPlayer = players.get(0);
         createHands();
         discardDeck.getNewCard(drawDeck.drawACard());
         currentColor = (Color) getTopCard().color;
         showLastDiscardedCard();
-        previousColor = currentColor;
         checkIfDraw4TurnUpAtTheBeginning();
+        previousColor = currentColor;
         actionCardCheck();
     }
 
     //The game player loop: It starts from the 0 position of the player list and loop with the nextPlayer method
     private void playerLoop() {
-
         output.println("**************************************************************");
         System.out.println("It is your turn to play, " + currentPlayer.name + "!");
         showLastDiscardedCard();
@@ -90,8 +91,6 @@ public class Game {
         drawn = false;// drawn back to false for the next player
         skipped = false;
         currentPlayer = nextPlayer();
-
-
     }
 
     private void actionCardCheck() {
@@ -120,7 +119,6 @@ public class Game {
             pulled2 = false;
 
         } else if (getTopCard().number == 13) { // COLOR SELECTION
-
             colorSelection();
         }
     }
@@ -283,7 +281,6 @@ public class Game {
                         currentPlayer.hand.add(drawDeck.drawACard());
                         output.println("The move is invalid! You shall take back your card and get a penalty card. Here are your cards in hand now: ");
                         output.println(currentPlayer.hand);
-
                         isSkippedOrInvalid = true;
                     }
                 } else currentColor = (Color) card.color;
@@ -309,7 +306,7 @@ public class Game {
 
     }
 
-
+//method not used
     private Player previousPlayer() {
         int index = 0;
         if (isClockwise) {
@@ -329,7 +326,7 @@ public class Game {
 
     //    here are the methods to update the game state
     private void updateState() {
-        updateWinnerPoints();
+        updateRound();
     }
 
     private boolean roundOver() {
@@ -342,8 +339,15 @@ public class Game {
         return false;
     }
 
-    //    method to calculate the points gained by the winner in each round
-    private void updateWinnerPoints() {
+    //    method to calculate the points gained by the winner in each round and announce the winner info
+    private void updateRound() {
+        Player winner = roundWinner();
+        winner.gainPoints(totalCardPoints());
+        System.out.println("Congratulations! " + winner.name + " has won, " + "and has gained " + winner.getPoints() + " points!");
+    }
+
+    //    winner of each round (for database)
+    private Player roundWinner() {
         Player winner = null;
         if (roundOver()) {
             for (Player p : players) {
@@ -351,8 +355,27 @@ public class Game {
                     winner = p;
                 }
             }
-            System.out.println(winner.name + " has won.");
-            winner.gainPoints(totalCardPoints());
+        }
+        return winner;
+    }
+
+    //    winner of each session (for database)
+    private Player sessionWinner() {
+        Player winner = null;
+        if (sessionOver()) {
+            for (Player p : players) {
+                if (p.getPoints() >= 500) {
+                    winner = p;
+                }
+            }
+        }
+        return winner;
+    }
+
+    private void updateSession() {
+        Player winner = sessionWinner();
+        if (sessionOver()) {
+            System.out.println("Congratulations! " + winner.name + " has won, " + "and has gained " + winner.getPoints() + " points!");
         }
     }
 
@@ -557,65 +580,30 @@ public class Game {
     // this method decide the color that the game rule will take to judge if the played card is valid or not.
     private void colorSelection() {
 
-        boolean invalidColor = false;
+        boolean invalidColor;
         if (getTopCard().number != 13 && getTopCard().number != 14) {
             currentColor = (Color) getTopCard().color;
-
         } else {
             do {
                 output.println(currentPlayer.name + " --> You may select a different color to play: 'R' for red, 'B' for blue, 'G' for green and 'Y' for yellow");
-//                Scanner input = new Scanner(System.in);
                 String c = currentPlayer.chooseColor();
-//                String[] colorStrings = {"R", "Y", "G", "B"};
-//                if (currentPlayer.getClass().equals(HumanPlayer.class)) {
-//                    c = input.next();
-//                } else if (currentPlayer.getClass().equals(Bot.class)) {
-//                    c = colorStrings[(int) Math.floor(Math.random() * 4)];
-//                } else if (currentPlayer.getClass().equals(SmartBot.class)) {
-//                    c = ((SmartBot) currentPlayer).chooseColor();
-//                }
                 if (c.equalsIgnoreCase("R")) {
-                    if (discardDeck.deck.size() == 1) {
-                        previousColor = currentColor;
-                    }
-                    else{
-                        if (getPreviousCard().color.name().equals("BLACK"))
-                            previousColor = currentColor;
-                        else previousColor = (Color) getPreviousCard().color;
-                    }
+                    checkPreviousColor();
                     currentColor = Color.RED;
                     output.println("Color changed to red / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("B")) {
-                    if (discardDeck.deck.size() == 1) {
-                        previousColor = currentColor;
-                    }else{
-                        if (getPreviousCard().color.name().equals("BLACK"))
-                            previousColor = currentColor;
-                        else previousColor = (Color) getPreviousCard().color;
-                    }
+                    checkPreviousColor();
                     currentColor = Color.BLUE;
                     output.println("Color changed to blue / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("G")) {
-                    if (discardDeck.deck.size() == 1) {
-                        previousColor = currentColor;
-                    }else{
-                        if (getPreviousCard().color.name().equals("BLACK"))
-                            previousColor = currentColor;
-                        else previousColor = (Color) getPreviousCard().color;
-                    }
+                    checkPreviousColor();
                     currentColor = Color.GREEN;
                     output.println("Color changed to green / previous color was " + previousColor);
                     invalidColor = false;
                 } else if (c.equalsIgnoreCase("Y")) {
-                    if (discardDeck.deck.size() == 1) {
-                        previousColor = currentColor;
-                    }else{
-                        if (getPreviousCard().color.name().equals("BLACK"))
-                            previousColor = currentColor;
-                        else previousColor = (Color) getPreviousCard().color;
-                    }
+                    checkPreviousColor();
                     currentColor = Color.YELLOW;
                     output.println("Color changed to yellow / previous color was " + previousColor);
                     invalidColor = false;
@@ -624,10 +612,18 @@ public class Game {
                     output.println("The input color is not valid, please select a valid color!");
                     invalidColor = true;
                 }
-//                output.println("Color selected" + colorSelected + ", invalid color: " + invalidColor);
             } while (invalidColor);
         }
-
     }
 
+    private void checkPreviousColor() {
+        if (discardDeck.deck.size() == 1 && (getTopCard().number==13 || getTopCard().number ==14)) {
+            previousColor = Color.BLACK;
+            return;
+        } else {
+            if (getPreviousCard().color.name().equals("BLACK"))
+                previousColor = currentColor;
+            else previousColor = (Color) getPreviousCard().color;
+        }
+    }
 }

@@ -10,6 +10,11 @@ public class Bot extends Player{
     }
 
     @Override
+    public int getPoints() {
+        return super.getPoints();
+    }
+
+    @Override
     public String toString() {
         return "Bot " + name;
     }

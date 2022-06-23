@@ -11,6 +11,10 @@ public abstract class Player {
     public Player(){
     }
 
+    public int getPoints() {
+        return points;
+    }
+
     public Player(String name) {
         this.name = name;
     }
