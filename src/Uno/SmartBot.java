@@ -58,14 +58,21 @@ public class SmartBot extends Player{
                 } else colorCount.put("B", 1);
             }
         }
-        int max= 0;
-        for(Map.Entry<String, Integer> entry: colorCount.entrySet()){
-            if(entry.getValue()>max){
-                max = entry.getValue();
-                colorCode = entry.getKey();
-            }
+
+        String[] colorStrings = {"R", "Y", "G", "B"};
+        if (colorCount.isEmpty()) {
+           return colorStrings[(int) Math.floor(Math.random() * 4)];
         }
-        return colorCode;
+        else{
+            int max= 0;
+            for(Map.Entry<String, Integer> entry: colorCount.entrySet()){
+                if(entry.getValue()>max){
+                    max = entry.getValue();
+                    colorCode = entry.getKey();
+                }
+            }
+            return colorCode;
+        }
     }
 
 
