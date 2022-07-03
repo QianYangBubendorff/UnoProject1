@@ -1,13 +1,16 @@
 package Uno;
 
 import java.io.File;
+import java.sql.Connection;
 import java.io.FileNotFoundException;
 import java.lang.invoke.SwitchPoint;
+import java.sql.SQLException;
 import java.util.*;
 import java.io.PrintStream;
 
 public class Game {
-
+    private static final String INSERT_TEMPLATE = "INSERT INTO gameScores (Player, Session, Round, Score) VALUES ('%1s', %2d, %3d, %4d);";
+    private static final String SELECT_BYPLAYERANDSESSION = "SELECT Player, SUM(Score) AS Score FROM gameScores WHERE Player = '%1s' AND Session = %2d;";
     private final Scanner input;
     private final PrintStream output;
     private List<Player> players = new ArrayList<>();
@@ -25,6 +28,7 @@ public class Game {
     private HashMap<String, Integer> playerPoint; // will integrate later with datenbank
     private Color currentColor = null;
     private Color previousColor = null;
+    private SqliteClient client;
 
     public Game(Scanner input, PrintStream output) {
         this.input = input;
@@ -32,10 +36,7 @@ public class Game {
     }
 
     public void Run() {
-        drawDeck.generateDeck();
-        createPlayers();
-        Collections.shuffle(players);
-        System.out.println(players);
+        initializeSession();
         do {
             initialize();
             printState();
@@ -53,10 +54,10 @@ public class Game {
 
     //method to print out the hands of the 4 players for debugging purposes
     private void printPlayerHand() {
-        for (Player p: players) {
-             p.showHand();
-            }
+        for (Player p : players) {
+            p.showHand();
         }
+    }
 
     // initialize the game:
 // generate the drawdeck with 108 cards
@@ -66,10 +67,6 @@ public class Game {
 // If the top card of discard pile is a draw 4 action card, the card will be returned to the draw pile.
 // The draw pile will be reshuffled and a new top card from the drawn from the draw pile.
     private void initialize() {
-//        drawDeck.generateDeck();
-//        createPlayers();
-//        Collections.shuffle(players); //Just removed for easier debug
-//        System.out.println(players);
         createHands();
         currentPlayer = players.get(0);
         discardDeck.getNewCard(drawDeck.drawACard());
@@ -78,6 +75,32 @@ public class Game {
         checkIfDraw4TurnUpAtTheBeginning();
         previousColor = currentColor;
         actionCardCheck();
+    }
+
+    //initialization for each session: create deck, players, shuffle. The players and deck stay the same for all the rounds of the session.
+    private void initializeSession() {
+        drawDeck.generateDeck();
+        createPlayers();
+        Collections.shuffle(players); //Just removed for easier debug
+        initializeSQL();
+        System.out.println(players);
+    }
+
+    //   build connection with SQL and create the database and table
+    private void initializeSQL() {
+        String CREATETABLE = "CREATE TABLE gameScores (Player varchar(100) NOT NULL, Session int NOT NULL, Round int NOT NULL, Score int NOT NULL, CONSTRAINT PK_Sessions PRIMARY KEY (Player, Session, Round));";
+        try {
+            client = new SqliteClient("demodatabase.sqlite");
+            if (client.tableExists("gameScores")) {
+                client.executeStatement("DROP TABLE gameScores;");
+            }
+            client.executeStatement(CREATETABLE);
+//            for (Player p : players) {
+//                client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
+//            }
+        } catch (SQLException ex) {
+            System.out.println("Ups! Something went wrong:" + ex.getMessage());
+        }
     }
 
     //The game player loop: It starts from the 0 position of the player list and loop with the nextPlayer method
@@ -310,7 +333,7 @@ public class Game {
 
     }
 
-//method not used
+    //method not used
     private Player previousPlayer() {
         int index = 0;
         if (isClockwise) {
@@ -344,23 +367,65 @@ public class Game {
         winner.gainPoints(pointsWon);
         System.out.println("Congratulations! " + winner.name + " has won, " + "and has gained " + pointsWon + " points!");
 //        all the players return their leftover cards back to the drawdeck
-        for(Player p: players){
+        for (Player p : players) {
             p.returnHand(drawDeck);
         }
 //        the discardDeck cards will be returned to drawdeck as well.
-        while(discardDeck.getDeck().size()!=0){
+        while (discardDeck.getDeck().size() != 0) {
             drawDeck.addCard(discardDeck.drawACard());
         }
+        try {
+            for (Player p : players) {
+                if(p.name == winner.name){
+                    client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, pointsWon));
+                }
+                else client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        updateDatabase();
+        readRoundUpdate();
 //        method below is just for testing purpose
 //    printPlayerHand();
+
+    }
+
+    //        update the database player points at the end of each round
+//    private void updateDatabase() {
+//                try {
+//                    for (Player p : players) {
+//                        client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, p.getPoints()));
+//                    }
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+
+    private void readRoundUpdate(){
+        for(Player p: players){
+            readFromDatabase(p.name,session);
+        }
+    }
+
+    private void readFromDatabase(String playerName, int session){
+        ArrayList<HashMap<String, String>> results = null;
+        try {
+            results = client.executeQuery(String.format(SELECT_BYPLAYERANDSESSION, playerName, session));
+            for (HashMap<String, String> map : results) {
+                System.out.println(map.get("Player") + " has currently:  " + map.get("Score") + " points.");
+            }
+        }catch (SQLException ex) {
+        System.out.println("Ups! Something went wrong:" + ex.getMessage());
+    }
     }
 
     //    winner of each round (for database)
     private Player roundWinner() {
         Player winner = null;
         for (Player p : players) {
-                if (p.hand.size() == 0) {
-                    winner = p;
+            if (p.hand.size() == 0) {
+                winner = p;
             }
         }
         return winner;
@@ -382,7 +447,7 @@ public class Game {
     private void updateSession() {
         Player winner = sessionWinner();
         if (sessionOver()) {
-            System.out.println("Congratulations! " + winner.name + " has won, " + "and has gained " + winner.getPoints() + " points!");
+            System.out.println("Congratulations! " + winner.name + " has won in the session, " + "and has gained " + winner.getPoints() + " points!");
         }
     }
 
@@ -556,29 +621,29 @@ public class Game {
 
     // this method decide the color that the game rule will take to judge if the played card is valid or not.
     private void colorSelection() {
-                String c = currentPlayer.chooseColor();
-                if (c.equalsIgnoreCase("R")) {
-                    currentColor = Color.RED;
-                    checkPreviousColor();
-                    output.println("Color changed to red / previous color was " + previousColor);
-                } else if (c.equalsIgnoreCase("B")) {
-                    currentColor = Color.BLUE;
-                    checkPreviousColor();
-                    output.println("Color changed to blue / previous color was " + previousColor);
-                } else if (c.equalsIgnoreCase("G")) {
-                    currentColor = Color.GREEN;
-                    checkPreviousColor();
-                    output.println("Color changed to green / previous color was " + previousColor);
-                } else if (c.equalsIgnoreCase("Y")) {
-                    currentColor = Color.YELLOW;
-                    checkPreviousColor();
-                    output.println("Color changed to yellow / previous color was " + previousColor);
-                }
+        String c = currentPlayer.chooseColor();
+        if (c.equalsIgnoreCase("R")) {
+            currentColor = Color.RED;
+            checkPreviousColor();
+            output.println("Color changed to red / previous color was " + previousColor);
+        } else if (c.equalsIgnoreCase("B")) {
+            currentColor = Color.BLUE;
+            checkPreviousColor();
+            output.println("Color changed to blue / previous color was " + previousColor);
+        } else if (c.equalsIgnoreCase("G")) {
+            currentColor = Color.GREEN;
+            checkPreviousColor();
+            output.println("Color changed to green / previous color was " + previousColor);
+        } else if (c.equalsIgnoreCase("Y")) {
+            currentColor = Color.YELLOW;
+            checkPreviousColor();
+            output.println("Color changed to yellow / previous color was " + previousColor);
         }
+    }
 
 
     private void checkPreviousColor() {
-        if (discardDeck.deck.size() == 1 && (getTopCard().number==13 || getTopCard().number ==14)) {
+        if (discardDeck.deck.size() == 1 && (getTopCard().number == 13 || getTopCard().number == 14)) {
             previousColor = Color.BLACK;
             return;
         } else {
