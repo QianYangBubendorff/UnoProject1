@@ -391,16 +391,6 @@ public class Game {
 
     }
 
-    //        update the database player points at the end of each round
-//    private void updateDatabase() {
-//                try {
-//                    for (Player p : players) {
-//                        client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, p.getPoints()));
-//                    }
-//                }catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
 
     private void readRoundUpdate(){
         for(Player p: players){
