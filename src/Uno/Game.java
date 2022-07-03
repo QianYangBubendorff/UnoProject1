@@ -8,6 +8,7 @@ import java.io.PrintStream;
 
 public class Game {
 
+    private static final String INSERT_TEMPLATE= "INSERT INTO Sessions (Player, Session, Round, Score) VALUES ('%1s', %2d, %3d, %4d);";
     private final Scanner input;
     private final PrintStream output;
     private List<Player> players = new ArrayList<>();
@@ -25,6 +26,7 @@ public class Game {
     private HashMap<String, Integer> playerPoint; // will integrate later with datenbank
     private Color currentColor = null;
     private Color previousColor = null;
+private SqliteClient client;
 
     public Game(Scanner input, PrintStream output) {
         this.input = input;
@@ -351,8 +353,29 @@ public class Game {
         while(discardDeck.getDeck().size()!=0){
             drawDeck.addCard(discardDeck.drawACard());
         }
+
+        for(Player p: players){
+            if(p is winn) {
+                client.executeStatement(String.format(INSERT_TEMPLATE, p.name, round, session, p.points));
+            } else {
+                put zero
+            }
+
+        }
 //        method below is just for testing purpose
 //    printPlayerHand();
+    }
+
+    showScores() {
+        for(Player p: players){
+
+            ArrayList<HashMap<String, String>> results = client.executeQuery(String.format(SELECT_BYPLAYERANDSESSION, "Anita", 1));
+
+            for (HashMap<String, String> map : results) {
+                System.out.println(map.get("Player") + " hat derzeit:  " + map.get("Score") + " Punkte");
+            }
+
+        }
     }
 
     //    winner of each round (for database)
