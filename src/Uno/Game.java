@@ -37,19 +37,17 @@ public class Game {
 
 
     public void setRandomNumberForSessionNumber() {
-        session = (int) ((Math.random() * (3000 - 1)) + 1);
+        session = (int) ((Math.random() * (30000 - 1)) + 1);
     }
 
     public void Run() {
         initializeSession();
         do {
-
             initialize();
             printState();
             do {
                 playerLoop();
                 printState();
-//            DiscardPilebecomesDrawPileIfDrawPileEmpty();
             } while (!roundOver());
             updateRound();
             round++;
@@ -94,18 +92,16 @@ public class Game {
 
     //   build connection with SQL and create the database and table
     private void initializeSQL() {
-        String CREATETABLE = "CREATE TABLE gameScores (Player varchar(100) NOT NULL, Session int NOT NULL, Round int NOT NULL, Score int NOT NULL, CONSTRAINT PK_Sessions PRIMARY KEY (Player, Session, Round));";
+//        String CREATETABLE = "CREATE TABLE gameScores (Player varchar(100) NOT NULL, Session int NOT NULL, Round int NOT NULL, Score int NOT NULL, CONSTRAINT PK_Sessions PRIMARY KEY (Player, Session, Round));";
+        String CREATETABLE = "CREATE TABLE if not exists gameScores (Player varchar(100) NOT NULL, Session int NOT NULL, Round int NOT NULL, Score int NOT NULL, CONSTRAINT PK_Sessions PRIMARY KEY (Player, Session, Round));";
         try {
             client = new SqliteClient("demodatabase.sqlite");
-//            if (client.tableExists("gameScores")) {
-//                client.executeStatement("DROP TABLE gameScores;");
-//            }
             client.executeStatement(CREATETABLE);
-//            for (Player p : players) {
-//                client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
-//            }
+            for (Player p : players) {
+                client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, 0, 0));
+                }
         } catch (SQLException ex) {
-            System.out.println("Ups! Something went wrong:" + ex.getMessage());
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -189,22 +185,18 @@ public class Game {
                 System.out.println("Please choose a name for the bot!");
                 botName = input.next();
             }
-            System.out.println("Please choose a level for the bot from 1 to 3!");
+            System.out.println("Please choose a level for the bot from 1 to 2!");
 
             try {
                 String botLevelStr = input.next();
                 int botLevel = Integer.parseInt(botLevelStr);
-                if (botLevel > 0 && botLevel < 4) {
+                if (botLevel > 0 && botLevel < 3) {
                     levelError = false;
-                    if (botLevel == 1) {
-                        players.add(new Bot(botName));
-                        System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
-
-                    } else if (botLevel == 2) {
+                     if (botLevel == 1) {
                         players.add(new SmartBot(botName));
                         System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
 
-                    } else if (botLevel == 3) {
+                    } else if (botLevel == 2) {
                         players.add(new ExpertBot(botName));
                         System.out.println("Welcome to the game, " + "player" + players.size() + " " + botName + "!");
                     }
@@ -215,6 +207,7 @@ public class Game {
                 }
             } catch (Exception e) {
                 output.println("Please choose a valid level for your bot!");
+                levelError = true;
             }
         }
 
@@ -282,7 +275,11 @@ public class Game {
                 readRules();
                 System.out.println("I hope you have understood the rules and have decided the next move :), " + currentPlayer.name + "!");
 //            readUserInput();
-            } else if (inputAction.equals("skip")) {
+            } else if (inputAction.equals("score")) {
+                //read the scores of the players of the current session
+                readRoundUpdate();
+            }
+            else if (inputAction.equals("skip")) {
                 //the player is not allowed to choose skip input if he has not drawn a card when he has no valid card to play
                 if (!drawn) {
                     output.println("Invalid input, you cannot skip. Please choose 'd' to draw a card/cards if you have no valid card to play");

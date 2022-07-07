@@ -50,6 +50,7 @@ public class HumanPlayer extends Player {
             System.out.println("Please choose the number of the card to discard,The number should be between 1 and " + hand.size());
             System.out.println("If you have no valid card to play, please enter 'd' to draw a card or 's' to skip if you have already drawn a card");
             System.out.println("If you need help, please enter 'h' for help");
+            System.out.println("If you would like to know the status of the scores, please enter 'p'!");
             action = input.nextLine();
             try {
                 if (action.chars().allMatch(Character::isDigit) && Integer.parseInt(action) > 0 && Integer.parseInt(action) <= hand.size()) {
@@ -60,7 +61,10 @@ public class HumanPlayer extends Player {
                     action = "help";
                 } else if (action.equals("s")) {
                     action = "skip";
-                } else {
+                } else if (action.equals("p")) {
+                    action = "score";
+                }
+                else {
                     System.out.println("Please enter a valid choice of action!");
                     inputError = true;
                 }

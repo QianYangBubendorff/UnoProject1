@@ -1,5 +1,6 @@
 package Uno;
 
+//this is the advanced level intelligent bot that we have not yet finished coding
 public class ExpertBot extends Player {
 
     public ExpertBot(String name) {
