@@ -1,8 +1,9 @@
 package Uno;
 
+import Uno.Card;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class Carddeck {
     protected ArrayList<Card> deck= new ArrayList<>();

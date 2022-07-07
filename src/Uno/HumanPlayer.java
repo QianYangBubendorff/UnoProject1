@@ -1,12 +1,6 @@
 package Uno;
 
-import java.net.MalformedURLException;
-import java.io.IOException;
-import java.net.URLConnection;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
 
 public class HumanPlayer extends Player {
 

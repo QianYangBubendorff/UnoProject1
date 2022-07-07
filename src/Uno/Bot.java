@@ -1,7 +1,5 @@
 package Uno;
 
-import java.util.Scanner;
-
 public class Bot extends Player{
 
     public Bot(String name) {

@@ -1,0 +1,80 @@
+UNO Game Rules
+
+Goal of the game
+The goal of the classic UNO is to be the first player to score 500 points. The player who is the first
+to place all his cards in his hand receives points per round. Points are awarded for all cards that the
+other players still have in their hands (see Points).
+
+Gameplay
+The first game places a card from his hand on the discard pile. A card can only be placed on a card
+of the same suit or the same number. The black cards are special action cards with special rules (see
+action cards). If a player cannot place a matching card, he must draw a penalty card from the facedown pile. 
+He can play this card again immediately, if it fits. If he does not have a suitable card, the
+next player has the turn. The player who discards the penultimate card must play "UNO! (which
+means "One") to signal that he only has one card left in his hand. If a player forgets this and another
+player notices it in time (before the next player has drawn or discarded a card) he must draw 2
+penalty cards. The round is won by the player who has discarded the last card. The points are added
+up and a new round is played.
+
+Actioncards
+In the game there are black action cards with different functions, which are explained below.
+DRAW TWO CARD
+When this card is dealt, the next player must draw 2 cards and may
+do not discard any cards in this round. This card can only be placed on a card of the
+same suit or other draw two cards. If it is revealed at the beginning of the game, the
+same rules apply.
+RETOURE CART
+With this card the direction of play changes. If you used to play to the left, you now
+play to the right and vice versa. The card can only be placed on a corresponding colour
+or another return card. If this card is drawn at the beginning of the game, the dealer
+starts and then the player continues the game on his right instead of his left..
+SUSPEND CARD
+After this card has been dealt, the next player is "skipped". The card can only be placed
+on top of another card of the same suit or on top of another drop card. If this card is
+drawn at the beginning of the game, the player to the left of the dealer is "skipped" and
+the player to the left of this player continues the game.
+COLOUR SELECTION CARD
+Der Spieler, der diese Karte legt, entscheidet welche Farbe als nächstes gelegt werden
+soll. Auch die schon liegende Farbe darf gewählt werden. Ein Farbenwahl Karte darf
+auch dann gelegt werden, wenn der Spieler eine andere Karte legen könnte. Wenn eine
+Farbenwahl Karte zu Beginn des Spiels gezogen wird, entscheidet der Spieler zur
+Linken des Gebers, welche Farbe als nächstes gelegt werden soll.
+DRAW FOUR COLOUR SELECTION CARD
+This card is the best. The player who lays it decides which colour to lay next. The next
+player must also take 4 cards from the deck. He may not discard any card in this round.
+Unfortunately, the card may only be laid if the player who has it does not have a card in
+his hand that matches the colour on the discard pile. If the player has a card with the
+corresponding number or action cards, the draw four colour choice card can still be laid.
+A player who has a draw four colour choice card can bluff and place the card "illegally".
+However, if he is "caught" doing so, certain rules apply (see penalty cards). If this card
+is drawn at the beginning of the game, it is placed back on the pile and another card is
+drawn.
+
+Penalties
+If no player does not follow the rules, he must draw one or more penalty cards. The rules are as
+follows:
+• UNO: If a player forgets to call UNO! after laying his penultimate card and the next player
+has not yet played his card, he must draw a penalty card.
+• Suggestions: If a player makes suggestions to his teammates as to what they should play, he
+must draw two cards as a penalty.
+• Mislaid: Anyone who plays a card when it is not his turn or who has played a wrong card
+must take it up again and is also dealt a penalty card.
+• The +4 may only be placed if the player cannot use the current suit, with the exception of
+other action cards. If the player affected by the +4 believes that the card was played wrongly,
+he may challenge the previous player. The previous player must then prove to him by
+showing his cards that he was indeed unable to use the colour correctly. If he can confirm
+this, the challenging player must now take 6 cards instead of 4. If, on the other hand, he has
+been convicted of having played the +4 illegally, he must draw the 4 cards himself.
+
+Point
+The player who is the first to discard all his cards receives the following points for the cards his
+fellow players still hold in their hands:
+Card Value
+Each Number Card respective value
+Retoure Card 20 points
+Suspend Card 20 points
+Colour Selection Card 50 points
+Draw Four Colour Selection Card 50 points
+The first to reach 500 points wins the game..
+
+

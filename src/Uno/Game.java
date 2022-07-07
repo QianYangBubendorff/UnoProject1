@@ -17,7 +17,7 @@ public class Game {
     private Carddeck drawDeck = new Carddeck();
     private DiscardDeck discardDeck = new DiscardDeck();
     private int round = 1;
-    private int session = 1;
+    private int session;
     private boolean isClockwise = true; // check if the direction has been changed. It should change only once
     private boolean skipped = false; // the skip card should only make one player skip. Once skipped, it can only be skipped again when another skip card is played
     private Player currentPlayer;
@@ -35,9 +35,15 @@ public class Game {
         this.output = output;
     }
 
+
+    public void setRandomNumberForSessionNumber() {
+        session = (int) ((Math.random() * (3000 - 1)) + 1);
+    }
+
     public void Run() {
         initializeSession();
         do {
+
             initialize();
             printState();
             do {
@@ -49,7 +55,6 @@ public class Game {
             round++;
         } while (!sessionOver());
         updateSession();
-        session++;
     }
 
     //method to print out the hands of the 4 players for debugging purposes
@@ -79,6 +84,7 @@ public class Game {
 
     //initialization for each session: create deck, players, shuffle. The players and deck stay the same for all the rounds of the session.
     private void initializeSession() {
+        setRandomNumberForSessionNumber();
         drawDeck.generateDeck();
         createPlayers();
         Collections.shuffle(players); //Just removed for easier debug
@@ -91,9 +97,9 @@ public class Game {
         String CREATETABLE = "CREATE TABLE gameScores (Player varchar(100) NOT NULL, Session int NOT NULL, Round int NOT NULL, Score int NOT NULL, CONSTRAINT PK_Sessions PRIMARY KEY (Player, Session, Round));";
         try {
             client = new SqliteClient("demodatabase.sqlite");
-            if (client.tableExists("gameScores")) {
-                client.executeStatement("DROP TABLE gameScores;");
-            }
+//            if (client.tableExists("gameScores")) {
+//                client.executeStatement("DROP TABLE gameScores;");
+//            }
             client.executeStatement(CREATETABLE);
 //            for (Player p : players) {
 //                client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
