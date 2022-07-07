@@ -149,6 +149,7 @@ public class SmartBot extends Player{
 
     @Override
     public boolean unoDeclare() {
+        System.out.println("If you have only one card left, please enter 'uno'! ");
         return true;
     }
 

@@ -376,12 +376,11 @@ public class Game {
         }
         try {
             for (Player p : players) {
-                if(p.name == winner.name){
+                if (p.name == winner.name) {
                     client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, pointsWon));
-                }
-                else client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
+                } else client.executeStatement(String.format(INSERT_TEMPLATE, p.name, session, round, 0));
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 //        updateDatabase();
@@ -392,22 +391,22 @@ public class Game {
     }
 
 
-    private void readRoundUpdate(){
-        for(Player p: players){
-            readFromDatabase(p.name,session);
+    private void readRoundUpdate() {
+        for (Player p : players) {
+            readFromDatabase(p.name, session);
         }
     }
 
-    private void readFromDatabase(String playerName, int session){
+    private void readFromDatabase(String playerName, int session) {
         ArrayList<HashMap<String, String>> results = null;
         try {
             results = client.executeQuery(String.format(SELECT_BYPLAYERANDSESSION, playerName, session));
             for (HashMap<String, String> map : results) {
                 System.out.println(map.get("Player") + " has currently:  " + map.get("Score") + " points.");
             }
-        }catch (SQLException ex) {
-        System.out.println("Ups! Something went wrong:" + ex.getMessage());
-    }
+        } catch (SQLException ex) {
+            System.out.println("Ups! Something went wrong:" + ex.getMessage());
+        }
     }
 
     //    winner of each round (for database)
@@ -508,8 +507,8 @@ public class Game {
                 DiscardPilebecomesDrawPileIfDrawPileEmpty();
                 currentPlayer.hand.add(drawDeck.drawACard());
             }
+            currentPlayer.showHand();
             pulled2 = true;
-
         }
     }
 
