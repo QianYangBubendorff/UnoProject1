@@ -141,8 +141,9 @@ public class Game {
             }
 
         } else if (getTopCard().number == 12) { // +2
-            draw2Penalty();
             currentPlayer = nextPlayer();
+            output.println("Sorry, "+currentPlayer.name +" "+ "You have to draw two new cards!");
+            draw2Penalty();
             pulled2 = false;
 
         } else if (getTopCard().number == 13) { // COLOR SELECTION
