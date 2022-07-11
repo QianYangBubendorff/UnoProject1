@@ -30,6 +30,8 @@ public class SmartBot extends Player{
         return super.getPoints();
     }
 
+//    smart bot counts for each color how many cards he has in hand and choose the color that he most cards has.
+//    If he has no cards with regular colors. He will choose a random color.
     @Override
     public String chooseColor() {
         HashMap<String, Integer> colorCount = new HashMap<>();
@@ -75,7 +77,7 @@ public class SmartBot extends Player{
         }
     }
 
-
+//when the input is a number, bot chooses the card with the index to play
     @Override
     public Card play(String indexStr) {
 //        int cardIndex = 0;
@@ -85,17 +87,22 @@ public class SmartBot extends Player{
         return hand.remove(cardIndex);
     }
 
+//after each round, the hasdrawn will be reset to false in the game loop
     @Override
     public void resetBotHasDrawn() {
         hasDrawn = false;
     }
 
+//    the method below shows how the bot decide his next move.
+//    First, bots check if he has valid cards to play
+//    Then, he will select a valid card with the highest points to play. He shall not play the draw 4 card until he has no other valid cards
+//    If he has no valid card to play,he will draw a card and skip if the new drawn card is not valid
     @Override
     public String inputAction(Card topCard, Color currentColor) {
         showHand();
         ArrayList<Card> validCards = new ArrayList<>();
         for (Card c : hand) {
-            if (c.number == topCard.number || c.color.name().equals(currentColor.name())|| c.number == 13 ||c.number ==14) {
+            if (c.number == topCard.number || c.color.name().equals(currentColor.name())||(c.color.name().equals(currentColor.name()) && c.number == 13) ||c.number ==14) {
                 validCards.add(c);
             }
         }
@@ -107,7 +114,7 @@ public class SmartBot extends Player{
                 hasDrawn = false;
                 return "skip";
             }
-
+//If he has only one valid card with number 13 or 14
         } else if (validCards.size() == 1 && (validCards.get(0).number == 14 ||validCards.get(0).number == 13)) {
             int indexOf14Or13 = 0;
             for (int i = 0; i < hand.size(); i++) {
@@ -117,6 +124,7 @@ public class SmartBot extends Player{
             }
             return String.valueOf(indexOf14Or13);
         } else {
+//            If bot has more than 1 valid card, he should choose the highest value card to play (but not the card 14).
             Card bestCardToPlay = new Card(0, Color.BLACK);
             for (Card c : validCards) {
                 if (c.number != 14) {
@@ -147,12 +155,13 @@ public class SmartBot extends Player{
         super.gainPoints(gainedPoints);
     }
 
+//    smart bot always declares uno correctly
     @Override
     public boolean unoDeclare() {
         System.out.println("If you have only one card left, please enter 'uno'! ");
         return true;
     }
-
+//smart bot decides randomly if he would like to challenge
     @Override
     public String decisionToChallenge() {
         String[] challengeDecision = new String[]{"Y", "N"};

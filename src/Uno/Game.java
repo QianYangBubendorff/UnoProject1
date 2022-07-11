@@ -354,7 +354,7 @@ public class Game {
         return previousPlayer;
     }
 
-
+//the round is over when one player's hand is empty
     private boolean roundOver() {
         for (Player p : players) {
             if (p.hand.size() == 0) {
@@ -424,7 +424,7 @@ public class Game {
         return winner;
     }
 
-    //    winner of each session (for database)
+    //    winner of each session (for database), the player who has more than 500 points
     private Player sessionWinner() {
         Player winner = null;
         if (sessionOver()) {
@@ -504,7 +504,9 @@ public class Game {
         else isClockwise = true;
     }
 
-
+//first we check if the draw pile is empty, if yes, we will swap the pile
+// then the current player will draw 2 new cards and show his hand.
+// pulled2 will be set to true so that the next player does not to draw 2 new cards again if the top card is still 12
     private void draw2Penalty() {
         if (!pulled2) {
             for (int i = 0; i < 2; i++) {
